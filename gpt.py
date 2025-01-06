@@ -18,7 +18,6 @@ n_layer = 6
 dropout = 0.2
 torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.enabled = True
-scaler = amp.GradScaler('cuda')
 
 # ------------
 print("device : " + device)
@@ -221,16 +220,16 @@ for iter in range(max_iters):
     xb, yb = get_batch('train')
 
     # Forward pass in mixed precision
-    with torch.amp.autocast():
-        logits, loss = model(xb, yb)
+
+    logits, loss = model(xb, yb)
     
     # Backward pass with gradient scaling
     optimizer.zero_grad(set_to_none=True)
-    scaler.scale(loss).backward()
+    # scaler.scale(loss).backward()
     
-    # Step optimizer using scaled gradients
-    scaler.step(optimizer)
-    scaler.update()
+    # # Step optimizer using scaled gradients
+    # scaler.step(optimizer)
+    # scaler.update()
 
     end_time = time.time()
     print(f"Time taken for iteration: {end_time - start_time:.2f} seconds")
