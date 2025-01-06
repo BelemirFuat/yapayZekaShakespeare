@@ -211,25 +211,19 @@ file = open("time.txt", "w")
 for iter in range(max_iters):
     start_time = time.time()
     
-    # Evaluate loss every few steps
-    #if iter % eval_interval == 0 or iter == max_iters - 1:
+     # every once in a while evaluate the loss on train and val sets
+   # if iter % eval_interval == 0 or iter == max_iters - 1:
     losses = estimate_loss()
     print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
 
-    # Sample a batch of data
+    # sample a batch of data
     xb, yb = get_batch('train')
 
-    # Forward pass in mixed precision
-
+    # evaluate the loss
     logits, loss = model(xb, yb)
-    
-    # Backward pass with gradient scaling
     optimizer.zero_grad(set_to_none=True)
-    # scaler.scale(loss).backward()
-    
-    # # Step optimizer using scaled gradients
-    # scaler.step(optimizer)
-    # scaler.update()
+    loss.backward()
+    optimizer.step()
 
     end_time = time.time()
     print(f"Time taken for iteration: {end_time - start_time:.2f} seconds")
