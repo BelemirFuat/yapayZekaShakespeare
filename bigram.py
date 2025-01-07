@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+import time
 
 # hyperparameters
-batch_size = 32 # how many independent sequences will we process in parallel?
+batch_size = 128 # how many independent sequences will we process in parallel?
 block_size = 8 # what is the maximum context length for predictions?
 max_iters = 3000
 eval_interval = 300
@@ -100,9 +101,10 @@ m = model.to(device)
 
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+file = open("bigramTime.txt", "w")
 
 for iter in range(max_iters):
-
+    start_time = time.time()
     # every once in a while evaluate the loss on train and val sets
     if iter % eval_interval == 0:
         losses = estimate_loss()
@@ -116,6 +118,11 @@ for iter in range(max_iters):
     optimizer.zero_grad(set_to_none=True)
     loss.backward()
     optimizer.step()
+    end_time = time.time()
+    print(f"Time taken for iteration: {end_time - start_time:.2f} seconds")
+    file.write(f"{end_time - start_time:.2f}\n")
+
+file.close()
 
 # generate from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)

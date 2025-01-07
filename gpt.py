@@ -7,7 +7,7 @@ import torch.cuda.amp as amp
 # hyperparameters
 batch_size = 128 # how many independent sequences will we process in parallel?
 block_size = 128 # what is the maximum context length for predictions?
-max_iters = 5000
+max_iters = 50000
 eval_interval = 500
 learning_rate = 3e-4
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -208,13 +208,15 @@ print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 file = open("time.txt", "w")
+file2 = open("stepTrainLossValLoss.txt", "w")
 for iter in range(max_iters):
     start_time = time.time()
     
      # every once in a while evaluate the loss on train and val sets
-   # if iter % eval_interval == 0 or iter == max_iters - 1:
-    losses = estimate_loss()
-    print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+    if iter % eval_interval == 0 or iter == max_iters - 1:
+        losses = estimate_loss()
+        print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+        file2.write(f"{iter} {losses['train']:.4f} {losses['val']:.4f}\n")
 
     # sample a batch of data
     xb, yb = get_batch('train')
@@ -226,10 +228,14 @@ for iter in range(max_iters):
     optimizer.step()
 
     end_time = time.time()
-    print(f"Time taken for iteration: {end_time - start_time:.2f} seconds")
+    print(f"{iter}. Time taken for iteration: {end_time - start_time:.2f} seconds")
     file.write(f"{end_time - start_time:.2f}\n")
 file.close()
 # generate from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
 #open('more.txt', 'w').write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
+file2.close()
+file3 = open("outputGPT.txt", "w")
+file3.write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
+file3.close()
