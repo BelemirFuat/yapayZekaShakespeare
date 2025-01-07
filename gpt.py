@@ -36,8 +36,6 @@ import torch.nn as nn
 from torch.nn import functional as F
 import time
 
-
-
 batch_size = 128
 block_size = 128 
 max_iters = 5000
@@ -260,7 +258,6 @@ file.close()
 # Modelden metin üretme
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
-#open('more.txt', 'w').write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
 file2.close()
 file3 = open("outputGPT.txt", "w")
 file3.write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
