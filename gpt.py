@@ -1,13 +1,46 @@
 import torch
+"""
+
+- torch: PyTorch kütüphanesi
+- torch.nn: PyTorch'un sinir ağı modülleri
+- torch.nn.functional: PyTorch'un fonksiyonel API'si
+- time: Zaman ölçümleri için Python'un standart kütüphanesi
+Değişkenler:
+- batch_size: Paralel olarak işlenecek bağımsız dizilerin sayısı
+- block_size: Tahminler için maksimum bağlam uzunluğu
+- max_iters: Maksimum eğitim iterasyonu sayısı
+- eval_interval: Değerlendirme aralığı
+- learning_rate: Öğrenme oranı
+- device: Eğitim için kullanılacak cihaz (CPU veya GPU)
+- eval_iters: Değerlendirme iterasyonu sayısı
+- n_embd: Gömme boyutu
+- n_head: Çok başlıklı dikkat mekanizmasındaki başlık sayısı
+- n_layer: Transformer katman sayısı
+- dropout: Dropout oranı
+Fonksiyonlar:
+- get_batch(split): Eğitim veya doğrulama verisi için bir batch oluşturur
+- estimate_loss(): Eğitim ve doğrulama verisi üzerinde model kaybını tahmin eder
+Sınıflar:
+- Head: Self-attention başlıklarından biri
+- MultiHeadAttention: Paralel olarak birden fazla self-attention başlığı
+- FeedFoward: Basit bir lineer katman ve aktivasyon fonksiyonu
+- Block: Transformer bloğu
+- GPTLanguageModel: GPT dil modeli
+Eğitim ve Değerlendirme:
+- Modelin eğitimi ve değerlendirilmesi için bir döngü
+- Eğitim sırasında kayıp değerlerinin ve zamanın kaydedilmesi
+Metin Üretimi:
+- Eğitilen modelden yeni metin üretme fonksiyonu
+"""
 import torch.nn as nn
 from torch.nn import functional as F
 import time
-import torch.cuda.amp as amp
 
-# hyperparameters
-batch_size = 128 # how many independent sequences will we process in parallel?
-block_size = 128 # what is the maximum context length for predictions?
-max_iters = 50000
+
+
+batch_size = 128
+block_size = 128 
+max_iters = 5000
 eval_interval = 500
 learning_rate = 3e-4
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -107,7 +140,7 @@ class MultiHeadAttention(nn.Module):
         out = self.dropout(self.proj(out))  # Son projeksiyon işlemi
         return out
 
-class FeedFoward(nn.Module):
+class FeedForward(nn.Module):
     """Basit bir lineer katman ve sonra bir aktivasyon fonksiyonu"""
 
     def __init__(self, n_embd):
@@ -129,7 +162,7 @@ class Block(nn.Module):
         super().__init__()
         head_size = n_embd // n_head
         self.sa = MultiHeadAttention(n_head, head_size)  # Çok başlıklı attention katmanı
-        self.ffwd = FeedFoward(n_embd)  # Feedforward katmanı
+        self.ffwd = FeedForward(n_embd)  # Feedforward katmanı
         self.ln1 = nn.LayerNorm(n_embd)  # İlk normalizasyon
         self.ln2 = nn.LayerNorm(n_embd)  # İkinci normalizasyon
 
