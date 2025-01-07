@@ -1,5 +1,5 @@
 # Yapay Zeka Projesi
-Bu proje, PyTorch kullanarak bir GPT (Generative Pretrained Transformer) dil modeli geliştirmeyi amaçlamaktadır. Model, verilen metin verisinden öğrenerek metin üretme yeteneği kazanmaktadır. Proje, modelin eğitimi, metin üretimi ve eğitim sürecinin zaman ölçümleri gibi çeşitli bileşenleri içerir.
+PyTorch kullanarak bir GPT (Generative Pretrained Transformer) dil modeli kullanıldı. Model, verilen metin verisinden öğrenerek metin üretme yeteneği kazanmaktadır. Proje, modelin eğitimi, metin üretimi ve eğitim sürecinin zaman ölçümleri üzerine çalışma ile yapılmıştır.
 
 ## Proje Amacı ve Yapısı
 
